@@ -1,0 +1,19 @@
+{
+  "ftp_server": "127.0.0.1",
+  "ftp_port": 21,
+  "ftp_name": "FTP Server",
+  "ftp_user": "username",
+  "ftp_password": "password",
+  "storage_in_GB": 32,
+  "advanced_options": {
+    "simulatenous_zip_process": 0,
+    "admin_counts": 1,
+    "system_info": "auto"
+  },
+  "public_mode": {
+    "enabled": true,
+    "max_size": 100,
+    "public_folder_name": "",
+    "allowed_format": ["png", "jpg"]
+  }
+}

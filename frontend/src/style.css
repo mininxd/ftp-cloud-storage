@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+@import "remixicon/fonts/remixicon.css";
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: light --default;
+}
+
+:root {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.font-title {
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.03em;
+}
+
+/* =========================================================
+   DRACULA CODE THEME
+   ========================================================= */
+.dracula-editor {
+  background-color: #282a36 !important;
+  color: #f8f8f2 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+  caret-color: #f8f8f2;
+}
+
+.dracula-editor .token.comment,
+.dracula-editor .token.prolog,
+.dracula-editor .token.doctype,
+.dracula-editor .token.cdata {
+  color: #6272a4;
+  font-style: italic;
+}
+
+.dracula-editor .token.punctuation {
+  color: #f8f8f2;
+}
+
+.dracula-editor .token.property,
+.dracula-editor .token.tag,
+.dracula-editor .token.constant,
+.dracula-editor .token.symbol,
+.dracula-editor .token.deleted {
+  color: #ff79c6;
+}
+
+.dracula-editor .token.boolean,
+.dracula-editor .token.number {
+  color: #bd93f9;
+}
+
+.dracula-editor .token.selector,
+.dracula-editor .token.attr-name,
+.dracula-editor .token.string,
+.dracula-editor .token.char,
+.dracula-editor .token.builtin,
+.dracula-editor .token.inserted {
+  color: #f1fa8c;
+}
+
+.dracula-editor .token.operator,
+.dracula-editor .token.entity,
+.dracula-editor .token.url,
+.dracula-editor .language-css .token.string,
+.dracula-editor .style .token.string {
+  color: #ff79c6;
+}
+
+.dracula-editor .token.atrule,
+.dracula-editor .token.attr-value,
+.dracula-editor .token.keyword {
+  color: #ff79c6;
+  font-weight: bold;
+}
+
+.dracula-editor .token.function,
+.dracula-editor .token.class-name {
+  color: #50fa7b;
+}
+
+.dracula-editor .token.regex,
+.dracula-editor .token.important,
+.dracula-editor .token.variable {
+  color: #8be9fd;
+}
+
+/* Drag overlay animation */
+.drag-overlay {
+  border: 2px dashed #0b57d0;
+  background-color: rgba(11, 87, 208, 0.08);
+}
+
+/* Dialog & Modal reset to prevent default browser black borders / outlines */
+dialog,
+dialog.modal {
+  border: none !important;
+  outline: none !important;
+}
+
+dialog:focus,
+dialog:focus-visible,
+dialog.modal:focus,
+dialog.modal:focus-visible {
+  outline: none !important;
+  border: none !important;
+}
+
+.modal-box {
+  outline: none !important;
+  box-sizing: border-box;
+}
+
+/* Ensure Dracula code editor always has strict zero padding for internal header/body/footer layout */
+#draculaEditorModal .modal-box {
+  padding: 0 !important;
+}
+
+/* Settings Modal 85vh Height & Scrollable Overflow (Matching Code Editor) */
+#settingsModal .modal-box {
+  height: 85vh !important;
+  max-height: 85vh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+

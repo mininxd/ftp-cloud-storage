@@ -1,0 +1,22 @@
+{
+  "name": "mininxd-ftp-server",
+  "version": "2.1.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@types/ftp": "^0.3.36",
+    "archiver": "^8.0.0",
+    "basic-ftp": "^6.2.0",
+    "express": "^5.2.1",
+    "multer": "^2.2.0",
+    "promise-ftp": "^1.3.5",
+    "ws": "^8.21.3"
+  }
+}
