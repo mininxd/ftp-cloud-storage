@@ -1,4 +1,4 @@
-# Mininxd FTP Server & Web Management Platform
+# FTP Cloud Storage Server & Web Management Platform
 
 [![Version](https://img.shields.io/badge/version-2.1.1-blue.svg)](file:///root/ftp-server/package.json)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.0.0-green.svg)](https://nodejs.org)
