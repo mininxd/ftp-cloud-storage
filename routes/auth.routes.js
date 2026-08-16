@@ -249,7 +249,7 @@ export const handleAddAdmin = (req, res) => {
         if (existing && existing.isAdmin === 1) {
             // Update masterkey if provided
             if (cleanMasterKey) {
-                db.prepare('UPDATE devices SET masterkey = ? WHERE LOWER(fingerprint) = LOWER(?)').run(cleanMasterKey, cleanTargetId);
+                db.prepare('UPDATE devices SET masterkey = ? WHERE fingerprint = ?').run(cleanMasterKey, existing.fingerprint);
             }
             const totalCountRow = db.prepare('SELECT COUNT(*) as count FROM devices').get();
             return res.json({
@@ -274,8 +274,8 @@ export const handleAddAdmin = (req, res) => {
         }
 
         if (existing) {
-            const updateStmt = db.prepare('UPDATE devices SET isAdmin = 1, masterkey = ? WHERE LOWER(fingerprint) = LOWER(?)');
-            updateStmt.run(cleanMasterKey, cleanTargetId);
+            const updateStmt = db.prepare('UPDATE devices SET isAdmin = 1, masterkey = ? WHERE fingerprint = ?');
+            updateStmt.run(cleanMasterKey, existing.fingerprint);
         } else {
             const insertStmt = db.prepare('INSERT INTO devices (fingerprint, isAdmin, masterkey, createdAt) VALUES (?, 1, ?, ?)');
             insertStmt.run(cleanTargetId, cleanMasterKey, new Date().toISOString());
@@ -340,8 +340,8 @@ export const handleRemoveAdmin = (req, res) => {
 
         if (existing) {
             // Demoting from admin: empty masterkey to NULL
-            const updateStmt = db.prepare('UPDATE devices SET isAdmin = 0, masterkey = NULL WHERE LOWER(fingerprint) = LOWER(?)');
-            updateStmt.run(cleanTargetId);
+            const updateStmt = db.prepare('UPDATE devices SET isAdmin = 0, masterkey = NULL WHERE fingerprint = ?');
+            updateStmt.run(existing.fingerprint);
         } else {
             const insertStmt = db.prepare('INSERT INTO devices (fingerprint, isAdmin, masterkey, createdAt) VALUES (?, 0, NULL, ?)');
             insertStmt.run(cleanTargetId, new Date().toISOString());
@@ -408,8 +408,8 @@ export const handleChangeMasterKey = (req, res) => {
             return res.status(404).json({ success: false, error: 'Target user is not registered as an admin' });
         }
 
-        const updateStmt = db.prepare('UPDATE devices SET masterkey = ? WHERE LOWER(fingerprint) = LOWER(?)');
-        updateStmt.run(cleanNewKey, cleanTargetId);
+        const updateStmt = db.prepare('UPDATE devices SET masterkey = ? WHERE fingerprint = ?');
+        updateStmt.run(cleanNewKey, target.fingerprint);
 
         return res.json({
             success: true,

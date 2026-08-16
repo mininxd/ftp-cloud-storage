@@ -100,6 +100,10 @@ async function verifyUserDevice() {
     isDeviceVerificationInProgress = true;
 
     const navWelcomeSetupBtn = document.getElementById('navWelcomeSetupBtn');
+    const welcomeSetupModal = document.getElementById('welcomeSetupModal');
+    const welcomeUserIdDisplay = document.getElementById('welcomeUserIdDisplay');
+    const welcomeAdminUrlSample = document.getElementById('welcomeAdminUrlSample');
+    const searchInput = document.getElementById('searchInput');
 
     if (navWelcomeSetupBtn && !navWelcomeSetupBtn._bound) {
         navWelcomeSetupBtn._bound = true;
@@ -134,19 +138,25 @@ async function verifyUserDevice() {
             return;
         }
 
-        // Check if session has already performed device verification (only bypass when admin is already configured)
-        const sessionVerified = sessionStorage.getItem('mininxd_session_verified_fp');
-        const sessionHasAdmins = sessionStorage.getItem('mininxd_has_admins') === 'true';
-        if (sessionVerified && sessionVerified === physicalDeviceFingerprint && sessionHasAdmins) {
-            state.isUserAdmin = localStorage.getItem('mininxd_is_admin') === 'true';
-            updateDeviceAuthBadge(state.isUserAdmin, physicalDeviceFingerprint);
-            applyAdminPermissionsUI();
-            if (navWelcomeSetupBtn) navWelcomeSetupBtn.classList.add('hidden');
-            if (state.filesList && state.filesList.length > 0) {
-                renderTable(searchInput ? searchInput.value.trim() : '');
-            }
-            return;
+        // Detect explicit admin entry via URL route /<user_id> (e.g. /0xc3d0a304ec71cfdfa4f59373f334b236 or /admin)
+        // Strictly exclude public routes like /pub/*, /public, etc.
+        const pathLower = window.location.pathname.toLowerCase();
+        let urlPathId = '';
+        if (!pathLower.startsWith('/pub') && !pathLower.startsWith('/public')) {
+            urlPathId = window.location.pathname.replace(/^\/+/, '').replace(/\/+$/, '').trim();
         }
+        if (!urlPathId && window.location.hash && (window.location.hash.startsWith('#0x') || window.location.hash.startsWith('#admin') || window.location.hash === '#admin')) {
+            urlPathId = window.location.hash.substring(1).trim();
+        }
+        const urlParams = new URLSearchParams(window.location.search);
+        if (!urlPathId && urlParams.get('userid')) {
+            urlPathId = urlParams.get('userid').trim();
+        }
+
+        const cleanTargetId = urlPathId.toLowerCase().replace(/^0x/, '');
+        const cleanActualId = (physicalDeviceFingerprint || '').toLowerCase().replace(/^0x/, '');
+        const isExplicitUserEntry = Boolean(cleanTargetId && !urlPathId.includes('/') && 
+            (urlPathId.startsWith('0x') || /^[0-9a-f]{32,64}$/i.test(cleanTargetId) || cleanTargetId === 'admin'));
 
         // 2. Verify physical device against SQLite database
         let data = null;
@@ -174,9 +184,14 @@ async function verifyUserDevice() {
             return;
         }
 
-        // Record session verification state
-        sessionStorage.setItem('mininxd_session_verified_fp', physicalDeviceFingerprint);
-        if (data.hasAdmins !== false && data.adminCount > 0) {
+        // Handle DB state and session persistence
+        if (data.hasAdmins === false || data.adminCount === 0) {
+            sessionStorage.removeItem('mininxd_has_admins');
+            sessionStorage.removeItem('mininxd_session_verified_fp');
+            localStorage.removeItem('mininxd_is_admin');
+            state.isUserAdmin = false;
+        } else {
+            sessionStorage.setItem('mininxd_session_verified_fp', physicalDeviceFingerprint);
             sessionStorage.setItem('mininxd_has_admins', 'true');
         }
 
@@ -188,38 +203,37 @@ async function verifyUserDevice() {
             localStorage.setItem('mininxd_device_fingerprint', physicalDeviceFingerprint);
         } catch (e) {}
 
-        // Detect explicit admin entry via URL route /<user_id> (e.g. /0xc3d0a304ec71cfdfa4f59373f334b236)
-        // Strictly exclude public routes like /pub/*, /public, etc.
-        const pathLower = window.location.pathname.toLowerCase();
-        let urlPathId = '';
-        if (!pathLower.startsWith('/pub') && !pathLower.startsWith('/public')) {
-            urlPathId = window.location.pathname.replace(/^\/+/, '').replace(/\/+$/, '').trim();
-        }
-        if (!urlPathId && window.location.hash && window.location.hash.startsWith('#0x')) {
-            urlPathId = window.location.hash.substring(1).trim();
-        }
-        const urlParams = new URLSearchParams(window.location.search);
-        if (!urlPathId && urlParams.get('userid')) {
-            urlPathId = urlParams.get('userid').trim();
-        }
-
-        const isExplicitUserEntry = Boolean(urlPathId && !urlPathId.includes('/') && (urlPathId.startsWith('0x') || /^[0-9a-f]{32,64}$/i.test(urlPathId)));
-
         // 3. Explicit Admin URL Entry Verification (Requires both Hardware Fingerprint AND Master Key)
         if (isExplicitUserEntry) {
-            const targetUserId = urlPathId.toLowerCase();
-            const actualId = (physicalDeviceFingerprint || '').toLowerCase();
-
-            // Step 1: Hardware Verifier Check
-            if (!isPhysicalDeviceAdmin || targetUserId !== actualId) {
-                showToast('Unauthorized: Hardware verification failed. This device is view-only. Canceling...', 'error');
+            // Check hardware device mismatch
+            if (cleanTargetId !== 'admin' && cleanTargetId !== cleanActualId) {
+                showToast('Unauthorized: Hardware verification failed. Device ID does not match this device.', 'error');
                 setTimeout(() => {
                     window.location.replace('/');
                 }, 1000);
                 return;
             }
 
-            // Step 2: Master Key Verifier Check
+            // Case A: This device is NOT yet an admin
+            if (!isPhysicalDeviceAdmin) {
+                if (data.hasAdmins === false || data.adminCount === 0) {
+                    if (welcomeUserIdDisplay) welcomeUserIdDisplay.textContent = state.currentDeviceFingerprint;
+                    if (welcomeAdminUrlSample) welcomeAdminUrlSample.textContent = `${window.location.origin}/${state.currentDeviceFingerprint}`;
+                    if (welcomeSetupModal) {
+                        try { welcomeSetupModal.showModal(); } catch (e) {}
+                    }
+                    showToast('Please configure your Administrator account & Master Key', 'info');
+                    return;
+                } else {
+                    showToast('This device is not registered as an administrator.', 'warning');
+                    setTimeout(() => {
+                        window.location.replace('/');
+                    }, 1200);
+                    return;
+                }
+            }
+
+            // Case B: This device IS an admin
             if (data.requiresMasterKey) {
                 let isMasterKeyValid = false;
                 const storedKey = state.currentMasterKey || localStorage.getItem('mininxd_master_key');
@@ -228,7 +242,7 @@ async function verifyUserDevice() {
                         const checkRes = await apiFetch('/api/verify_masterkey', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ masterkey: storedKey })
+                            body: JSON.stringify({ masterkey: storedKey, fingerprint: physicalDeviceFingerprint })
                         });
                         const checkData = await checkRes.json();
                         if (checkData && checkData.success) {
@@ -249,7 +263,7 @@ async function verifyUserDevice() {
                             try { localStorage.setItem('mininxd_is_admin', 'true'); } catch (e) {}
                             applyAdminPermissionsUI();
                             updateDeviceAuthBadge(true, state.currentDeviceFingerprint);
-                            showToast('Admin & Master Key verified. Welcome to Admin Console!', 'success');
+                            showToast('Master Key verified! Welcome to Admin Console', 'success');
                             showAdminDashboard();
                         },
                         onCancel: () => {
@@ -272,7 +286,7 @@ async function verifyUserDevice() {
             try { localStorage.setItem('mininxd_is_admin', 'true'); } catch (e) {}
             applyAdminPermissionsUI();
             updateDeviceAuthBadge(true, state.currentDeviceFingerprint);
-            showToast('Admin & Master Key verified. Welcome to Admin Console!', 'success');
+            showToast('Admin verified. Welcome to Admin Console!', 'success');
             showAdminDashboard();
             return;
         }
@@ -571,23 +585,35 @@ async function bootstrapApp() {
         }
     }
 
-    // Restore initial path from URL hash if available
-    if (window.location.hash) {
+    const initialRawPath = window.location.pathname.replace(/^\/+/, '').replace(/\/+$/, '').trim();
+    const initialSegments = initialRawPath.split('/').filter(Boolean);
+    const firstInitialSegment = initialSegments.length > 0 ? initialSegments[0].toLowerCase() : '';
+    const cleanFirstSegment = firstInitialSegment.replace(/^0x/, '');
+    const isExplicitAdminUrl = Boolean(cleanFirstSegment && !initialRawPath.includes('/') && 
+        (firstInitialSegment.startsWith('0x') || /^[0-9a-f]{32,64}$/i.test(cleanFirstSegment) || cleanFirstSegment === 'admin'));
+    const isPublicUrl = firstInitialSegment === 'pub' || firstInitialSegment === 'public';
+
+    if (!isExplicitAdminUrl && !isPublicUrl) {
+        // Restore initial path from URL hash if available
+        if (window.location.hash) {
+            try {
+                const rawHash = window.location.hash.replace(/^#/, '');
+                const decoded = decodeURIComponent(rawHash);
+                if (decoded && decoded.startsWith('/')) {
+                    state.currentPath = decoded;
+                }
+            } catch (e) {}
+        }
         try {
-            const rawHash = window.location.hash.replace(/^#/, '');
-            const decoded = decodeURIComponent(rawHash);
-            if (decoded && decoded.startsWith('/')) {
-                state.currentPath = decoded;
-            }
+            const targetUrl = state.currentPath === '/' ? '/' : '/#' + encodeURIComponent(state.currentPath);
+            history.replaceState({ path: state.currentPath }, '', targetUrl);
         } catch (e) {}
     }
-    try {
-        const targetUrl = state.currentPath === '/' ? '/' : '/#' + encodeURIComponent(state.currentPath);
-        history.replaceState({ path: state.currentPath }, '', targetUrl);
-    } catch (e) {}
 
     await verifyUserDevice();
-    await loadDirectory();
+    if (!isExplicitAdminUrl) {
+        await loadDirectory();
+    }
     updateStorageInfo(false);
     checkHeartbeat(true);
     checkPendingUploads();

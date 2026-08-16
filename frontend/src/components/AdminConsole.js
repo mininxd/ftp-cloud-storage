@@ -177,7 +177,9 @@ export function showAdminDashboard() {
     const bottomStatusBar = document.getElementById('bottomStatusBar');
     const fabTriggerBtn = document.getElementById('fabTriggerBtn');
     const fabMenu = document.getElementById('fabMenu');
+    const publicModeHeaderBanner = document.getElementById('publicModeHeaderBanner');
 
+    if (publicModeHeaderBanner) publicModeHeaderBanner.classList.add('hidden');
     if (fileManagerView) fileManagerView.classList.add('hidden');
     if (adminDashboardView) adminDashboardView.classList.remove('hidden');
     if (bottomStatusBar) bottomStatusBar.classList.add('hidden');
