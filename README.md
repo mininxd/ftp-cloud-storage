@@ -66,7 +66,7 @@
                                    |  HTTP / REST / WS
                                    v
 +-----------------------------------------------------------------------+
-|                 FTP Cloud Storage Node.js Server (:3690)              |
+|                 FTP Cloud Storage Node.js Server (:3000)              |
 |                                                                       |
 |  +------------------------+  +-------------------------------------+  |
 |  |  Express.js API Routes |  |  Security & Rate Limiting Engine    |  |
@@ -232,7 +232,7 @@ Edit [config.json](./config.json) with your FTP credentials and preferences:
 node index.js
 ```
 
-By default, the server runs on **http://localhost:3690** (or your device's LAN IP).
+By default, the server runs on **http://localhost:3000** (or your device's LAN IP).
 
 ### 4. Development Workflow
 
@@ -396,7 +396,7 @@ All settings can be dynamically overridden at runtime using environment variable
 | `SIMULTANEOUS_ZIP_PROCESS` | `advanced_options.simulatenous_zip_process` | `0` |
 | `ADMIN_COUNTS` | `advanced_options.admin_counts` | `1` |
 | `SYSTEM_INFO` | `advanced_options.system_info` | `"auto"` |
-| `PORT` | Web Server Port | `3690` |
+| `PORT` | Web Server Port | `3000` |
 
 > 📚 For comprehensive explanations, tuning tips, and environment profiles, refer to [config_readme.md](./config_readme.md).
 
