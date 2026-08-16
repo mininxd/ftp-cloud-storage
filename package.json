@@ -1,7 +1,7 @@
 {
-  "name": "mininxd-ftp-server",
+  "name": "ftp-cloud-storage",
   "version": "2.1.1",
-  "description": "",
+  "description": "FTP Cloud Storage Server & Web Management Platform",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

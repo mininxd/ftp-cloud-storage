@@ -1,12 +1,12 @@
 # FTP Cloud Storage Server & Web Management Platform
 
-[![Version](https://img.shields.io/badge/version-2.1.1-blue.svg)](file:///root/ftp-server/package.json)
+[![Version](https://img.shields.io/badge/version-2.1.1-blue.svg)](./package.json)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.0.0-green.svg)](https://nodejs.org)
-[![License](https://img.shields.io/badge/license-ISC-lightgrey.svg)](file:///root/ftp-server/package.json)
+[![License](https://img.shields.io/badge/license-ISC-lightgrey.svg)](./LICENSE)
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-Donate-FF5E5B?logo=kofi&logoColor=white)](https://ko-fi.com/mininxd)
 [![Saweria](https://img.shields.io/badge/Saweria-Donate-FFAA00?logo=curseforge&logoColor=white)](https://saweria.co/mininxd)
 
-**Mininxd FTP Server** is a modern, high-performance, lightweight web-based FTP management platform and cloud storage gateway. It bridges traditional FTP servers (remote or local) with web browsers through a Single Page Application (SPA), zero external database dependencies (native SQLite engine), hardware-based zero-trust device authentication, live WebSocket telemetry, and resilient file operations.
+**FTP Cloud Storage** is a modern, high-performance, lightweight web-based FTP management platform and cloud storage gateway. It bridges traditional FTP servers (remote or local) with web browsers through a Single Page Application (SPA), zero external database dependencies (native SQLite engine), hardware-based zero-trust device authentication, live WebSocket telemetry, and resilient file operations.
 
 ---
 
@@ -66,7 +66,7 @@
                                    |  HTTP / REST / WS
                                    v
 +-----------------------------------------------------------------------+
-|                    Mininxd Node.js Server (:3690)                     |
+|                 FTP Cloud Storage Node.js Server (:3690)              |
 |                                                                       |
 |  +------------------------+  +-------------------------------------+  |
 |  |  Express.js API Routes |  |  Security & Rate Limiting Engine    |  |
@@ -113,7 +113,7 @@
 ## Project Directory Structure
 
 ```text
-ftp-server/
+ftp-cloud-storage/
 ├── config.json              # Main server & FTP connection configuration
 ├── config_readme.md         # Detailed configuration manual & tuning guide
 ├── api_readme.md            # Complete REST & WebSocket API specification
@@ -184,8 +184,8 @@ ftp-server/
 
 ```bash
 # Clone the repository
-git clone <repository-url> mininxd-ftp-server
-cd mininxd-ftp-server
+git clone https://github.com/mininxd/ftp-cloud-storage.git
+cd ftp-cloud-storage
 
 # Install backend dependencies
 npm install
@@ -199,7 +199,7 @@ cd ..
 
 ### 2. Configure FTP & Server Parameters
 
-Edit [config.json](file:///root/ftp-server/config.json) with your FTP credentials and preferences:
+Edit [config.json](./config.json) with your FTP credentials and preferences:
 
 ```json
 {
@@ -223,7 +223,7 @@ Edit [config.json](file:///root/ftp-server/config.json) with your FTP credential
 }
 ```
 
-> 📖 **Need detailed configuration docs?** Read the [Configuration Guide](file:///root/ftp-server/config_readme.md).
+> 📖 **Need detailed configuration docs?** Read the [Configuration Guide](./config_readme.md).
 
 ### 3. Start the Server
 
@@ -289,7 +289,7 @@ View media without downloading files manually:
 
 ### 4. Asynchronous ZIP Archiving & Queue
 
-Downloading large folders or multiple files over FTP can be slow and resource-heavy. Mininxd solves this with an asynchronous worker:
+Downloading large folders or multiple files over FTP can be slow and resource-heavy. FTP Cloud Storage solves this with an asynchronous worker:
 
 1. Request a ZIP download via `/api/ftp/create-zip-job`.
 2. The server scans directories and downloads files to a temporary staging folder.
@@ -310,7 +310,7 @@ To protect against interrupted transfers and mobile network drops:
 
 ### 6. Zero-Trust Hardware Fingerprinting & Security
 
-Mininxd does not rely on easily forged cookies or simple session tokens. Instead, it utilizes client-side hardware fingerprinting:
+FTP Cloud Storage does not rely on easily forged cookies or simple session tokens. Instead, it utilizes client-side hardware fingerprinting:
 
 - **Fingerprint Generation**: Generates a 32-character hexadecimal identifier (`0x...`) combining hardware traits (Canvas rendering hash, WebGL vendor, AudioContext synthesis, CPU core count, screen dimensions, color depth).
 - **Database Registration**: Fingerprints are registered in SQLite (`devices.db`) upon first visit.
@@ -358,7 +358,7 @@ The built-in diagnostics engine monitors server health in real time:
 
 ## Configuration Guide
 
-The primary configuration file is [config.json](file:///root/ftp-server/config.json) located in the project root.
+The primary configuration file is [config.json](./config.json) located in the project root.
 
 ```json
 {
@@ -398,13 +398,13 @@ All settings can be dynamically overridden at runtime using environment variable
 | `SYSTEM_INFO` | `advanced_options.system_info` | `"auto"` |
 | `PORT` | Web Server Port | `3690` |
 
-> 📚 For comprehensive explanations, tuning tips, and environment profiles, refer to [config_readme.md](file:///root/ftp-server/config_readme.md).
+> 📚 For comprehensive explanations, tuning tips, and environment profiles, refer to [config_readme.md](./config_readme.md).
 
 ---
 
 ## REST API & WebSocket Documentation
 
-Mininxd provides a REST API and WebSocket stream:
+FTP Cloud Storage provides a REST API and WebSocket stream:
 
 | Category | Method | Endpoint | Description |
 | :--- | :--- | :--- | :--- |
@@ -434,7 +434,7 @@ Mininxd provides a REST API and WebSocket stream:
 | **Public** | `GET` | `/api/public/list` | List public user space files |
 | **Public** | `POST` | `/api/public/upload` | Upload to public user space (quota & format checked) |
 
-> 📖 For full request/response schemas and examples, see [api_readme.md](file:///root/ftp-server/api_readme.md).
+> 📖 For full request/response schemas and examples, see [api_readme.md](./api_readme.md).
 
 ---
 
@@ -461,7 +461,7 @@ When preparing a release package for deployment or distribution:
 ### 1. The web page shows "Not Connected to Storage"
 - Ensure your FTP server daemon is running.
 - Verify the IP address, port, username, and password in `config.json`.
-- Test if the FTP server is reachable from the machine hosting Mininxd:
+- Test if the FTP server is reachable from the machine hosting FTP Cloud Storage:
   ```bash
   nc -zv <ftp_server_ip> 21
   ```
@@ -481,7 +481,7 @@ When preparing a release package for deployment or distribution:
 
 ## Support & Donations
 
-If you find **Mininxd FTP Server** helpful and would like to support its ongoing development and maintenance, consider buying a coffee or donating via:
+If you find **FTP Cloud Storage** helpful and would like to support its ongoing development and maintenance, consider buying a coffee or donating via:
 
 - ☕ **Ko-fi**: [ko-fi.com/mininxd](https://ko-fi.com/mininxd)
 - 💛 **Saweria**: [saweria.co/mininxd](https://saweria.co/mininxd)
@@ -492,4 +492,4 @@ Your support is greatly appreciated and helps keep the project fast, secure, and
 
 ## License
 
-This project is licensed under the [ISC License](file:///root/ftp-server/package.json).
+This project is licensed under the [ISC License](./LICENSE).

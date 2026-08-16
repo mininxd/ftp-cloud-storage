@@ -1,6 +1,6 @@
-# Mininxd FTP Server API Documentation
+# FTP Cloud Storage API Documentation
 
-Welcome to the **Mininxd FTP Server & Web Management API** reference. This backend provides high-performance FTP file operations, device fingerprint authentication, and storage analytics.
+Welcome to the **FTP Cloud Storage API** reference. This backend provides high-performance FTP file operations, device fingerprint authentication, and storage analytics.
 
 ---
 

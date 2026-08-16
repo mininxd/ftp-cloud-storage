@@ -1,9 +1,9 @@
-# FTP Server Configuration Guide (`config.json`)
+# FTP Cloud Storage Configuration Guide (`config.json`)
 
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-Donate-FF5E5B?logo=kofi&logoColor=white)](https://ko-fi.com/mininxd)
 [![Saweria](https://img.shields.io/badge/Saweria-Donate-FFAA00?logo=curseforge&logoColor=white)](https://saweria.co/mininxd)
 
-This document provides a comprehensive guide for configuring the **FTP Server** via [config.json](file:///root/ftp-server/config.json) and environment variable overrides.
+This document provides a comprehensive guide for configuring **FTP Cloud Storage** via [config.json](./config.json) and environment variable overrides.
 
 ---
 
@@ -199,5 +199,5 @@ If this project helps your workflow, consider supporting its development:
 
 ## Related Documentation
 
-- 📖 [Main Project Documentation (README.md)](file:///root/ftp-server/README.md)
-- 📡 [REST API & WebSocket Documentation (api_readme.md)](file:///root/ftp-server/api_readme.md)
+- 📖 [Main Project Documentation (README.md)](./README.md)
+- 📡 [REST API & WebSocket Documentation (api_readme.md)](./api_readme.md)
